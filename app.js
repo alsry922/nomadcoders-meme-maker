@@ -3,13 +3,27 @@ const ctx = $canvas.getContext("2d");
 $canvas.width = 800;
 $canvas.height = 800;
 
-ctx.rect(0, 0, 50, 50);
-ctx.rect(50, 50, 50, 50);
-ctx.rect(100, 100, 50, 50);
-ctx.fill();
+let isPainting = false;
+ctx.lineWidth = 2;
+function onMouseMove(event) {
+  if (isPainting) {
+    ctx.lineTo(event.offsetX, event.offsetY);
+    ctx.stroke();
+    return;
+  }
+  ctx.moveTo(event.offsetX, event.offsetY);
+}
 
-ctx.beginPath();
-ctx.rect(150, 150, 50, 50);
-ctx.rect(200, 200, 50, 50);
-ctx.fillStyle = "grey";
-ctx.fill();
+function cancelPainting() {
+  isPainting = false;
+}
+
+function startPainting(event) {
+  isPainting = true;
+}
+
+$canvas.addEventListener("mousemove", onMouseMove);
+$canvas.addEventListener("mousedown", startPainting);
+$canvas.addEventListener("mouseup", cancelPainting);
+$canvas.addEventListener("mouseleave", cancelPainting);
+document.addEventListener("mouseup", cancelPainting);
