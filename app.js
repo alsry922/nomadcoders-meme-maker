@@ -1,3 +1,7 @@
+const $btnFill = document.querySelector(".btn-fill");
+const $btnStroke = document.querySelector(".btn-stroke");
+const $btnErase = document.querySelector(".btn-erase");
+const $btnReset = document.querySelector(".btn-reset");
 const $colorOptions = Array.from(
   document.getElementsByClassName("color-option")
 );
@@ -5,10 +9,13 @@ const $inputColor = document.getElementById("color");
 const $inputLineWidth = document.getElementById("line-width");
 const $canvas = document.querySelector("canvas");
 const ctx = $canvas.getContext("2d");
-$canvas.width = 800;
-$canvas.height = 800;
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 800;
+$canvas.width = CANVAS_WIDTH;
+$canvas.height = CANVAS_HEIGHT;
 
 let isPainting = false;
+let isFillmode = false;
 ctx.lineWidth = $inputLineWidth.value;
 
 function onMouseMove(event) {
@@ -21,8 +28,11 @@ function onMouseMove(event) {
 }
 
 function cancelPainting() {
-  ctx.beginPath();
   isPainting = false;
+  if (isFillmode) {
+    ctx.fill();
+  }
+  ctx.beginPath();
 }
 
 function startPainting() {
@@ -48,6 +58,27 @@ function setColor(color) {
   ctx.fillStyle = color;
 }
 
+function onFillbtnClick() {
+  isFillmode = true;
+}
+
+function onStrokebtnClick() {
+  isFillmode = false;
+}
+
+function onErasebtnClick() {
+  isFillmode = false;
+  ctx.strokeStyle = "white";
+}
+
+function onResetbtnClick() {
+  ctx.fillStyle = "white";
+  ctx.strokeStyle = "white";
+  ctx.fillRect(0, 0, CANVAS_HEIGHT, CANVAS_HEIGHT);
+  $inputColor.value = "white";
+  console.log($inputColor.value);
+}
+
 $canvas.addEventListener("mousemove", onMouseMove);
 $canvas.addEventListener("mousedown", startPainting);
 $canvas.addEventListener("mouseup", cancelPainting);
@@ -58,3 +89,7 @@ $inputColor.addEventListener("change", onChangeColor);
 $colorOptions.forEach((colorOption) => {
   colorOption.addEventListener("click", onColorClick);
 });
+$btnFill.addEventListener("click", onFillbtnClick);
+$btnStroke.addEventListener("click", onStrokebtnClick);
+$btnErase.addEventListener("click", onErasebtnClick);
+$btnReset.addEventListener("click", onResetbtnClick);
